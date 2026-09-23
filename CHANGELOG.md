@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file.
 
+## 1.0.0 (2026-09-23)
+
+### Features
+
+* Initial STACKIT SQLServer Flex module ([391ea01](https://github.com/terraform-stackit-modules/terraform-stackit-flex-sqlserver/commit/391ea01e34b7bd2255cea841b404eb889867556e))
+
 ## [1.0.1](https://github.com/terraform-stackit-modules/terraform-repo-template/compare/v1.0.0...v1.0.1) (2026-09-09)
 
 ### Bug Fixes
