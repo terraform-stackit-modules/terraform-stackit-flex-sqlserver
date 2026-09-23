@@ -9,6 +9,6 @@ output "database_ids" {
 }
 
 output "user_ids" {
-  description = "The user IDs created by the example."
+  description = "The user IDs created by the example (app + login)."
   value       = module.flex_sqlserver.user_ids
 }

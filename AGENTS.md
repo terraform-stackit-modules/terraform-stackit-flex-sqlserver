@@ -7,6 +7,37 @@ This file provides context and instructions for AI coding agents (Copilot, Curso
 This is a Terraform module for [STACKIT](https://www.stackit.de/en/), the cloud platform by Schwarz Group.
 It is part of the [terraform-stackit-modules](https://github.com/terraform-stackit-modules) organization, which aims to provide community-maintained, production-grade Terraform modules for STACKIT.
 
+### This module: flex-sqlserver
+
+Composite module for STACKIT **SQLServer Flex**. Repo name uses a hyphen (`flex-sqlserver`);
+provider resources are `stackit_sqlserverflex_instance` / `stackit_sqlserverflex_database` /
+`stackit_sqlserverflex_user`.
+
+**Sub-modules**
+- `modules/instance` — `stackit_sqlserverflex_instance` (toggled by `create_instance` via `count`).
+- `modules/database` — `stackit_sqlserverflex_database` (`for_each` over `databases`).
+- `modules/user` — `stackit_sqlserverflex_user` (`for_each` over `users`).
+
+**Key inputs** — `project_id` (req), `region`, `create_instance`/`instance_id`, `name`,
+`sqlserver_version`, `flavor_id`, `backup_schedule`, `retention_days` (30-90), `storage`
+({class,size}), `network` ({acl,access_scope}),
+`databases` (map: `{name, owner, collation?, compatibility?}`),
+`users` (map: `{username, roles, rotate_when_changed?}`).
+
+**Outputs** — `instance_id`, `edition`, `database_ids`, `user_ids`, `user_passwords` (sensitive).
+
+**Gotchas**
+- The database sub-module `depends_on = [module.user]` in the
+  root, because a database's `owner` is a plain username string (no implicit dependency) and the
+  API returns 404 "owner not found" if the DB is created before the user.
+- Replication is FLAVOR-carried, not native — the `replica` example uses a
+  replicated flavor, not an RDS-style replicate_source_db.
+- Maps keyed by a stable id; instance_id (known-after-apply) is only an attribute, never a for_each
+  key. `retention_days` validated 30-90.
+- User password output is `sensitive = true`.
+- Complete/replica tests self-skip in CI
+  (TERRATEST_RUN_ALL); CI runs only basic.
+
 ## Repository structure
 
 ```
